@@ -1,8 +1,8 @@
 # expense-visual-display-V1
-Expense visual display V1 is developed to help you track your personal expense and display it in form of human understandable charts. This is a small web-app. It loads data via CSV file and displays in the form of chart. At present it has one pie-chart displaying 'What did I spend for?', bar-chart displaying 'My expenditure detail' and second bar-chart displaying 'How much did I spend?'. The x-axis of 'How much did I spend?' bar-chart gives the frequency and bars give the amount spent.
+Expense visual display V1 is developed to help you track your personal expense and display it as human understandable charts. It is a small web-app. It loads data via CSV file and displays in the form of charts. At present it has a pie-chart displaying 'What did I spend for?', bar-chart displaying 'My expenditure detail' and second bar-chart displaying 'How much did I spend?'. The x-axis of 'How much did I spend?' bar-chart gives the frequency and bars give the amount spent.
 
-It needs to be hosted either in Online server or localhost to enable it display charts according to data provided in CSV file. 
-For V1, data needs to loaded manually into the CSV file as shown in table below:
+It needs to be hosted either in Online server or localhost to enable it to display charts based on data provided in CSV file. 
+For V1, data needs to manually loaded into the CSV file as in table below:
 
 | Timestamp        | Expenseid           | Expense-for  | Amount  | Category  |
 | ---------------- |:-------------------:| ------------:|--------:| ---------:|
