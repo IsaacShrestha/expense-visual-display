@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>My Expense Chart</title>
+		<link rel="stylesheet" href="css/dc.css" />
+		<!-- links for datatable -->
+		<link rel="stylesheet" type="text/css" href="css/dataTables.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+		
+		<!-- links for bootstrap -->
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-xs-offset-4">
+					<h3>My Expense Chart</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+					<div class="domain" id="category">
+						<div class="graph-header">
+							<p><strong class="strong">Categories</strong> <br/>
+								<span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+							<a class="reset" href="javascript:categoryChart.filterAll();dc.redrawAll();" style="display: none;">Reset</a>
+							
+							</p>
+						</div>						
+					</div>
+				</div>
+				
+				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+					<div class="events" id="expense" style="100%;">
+						<div class="graph-header">
+							<p>
+								<strong class="strong">Spend for</strong> <br/>
+								<span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+								<a class="reset" href="javascript:expenseChart.filterAll();dc.redrawAll();" style="display: none;">Reset</a>
+							</p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+		
+		
+		
+			<script src="js/crossfilter.js"></script>
+			<script src="https://d3js.org/d3.v3.min.js"></script>
+			<script src="js/dc.js"></script>
+			<script>
+			var categoryChart = dc.pieChart("#category"),
+				expenseChart = dc.rowChart("#expense");
+			
+			
+				d3.csv("data-source/expenses.csv", function(err, data){
+					if(err) throw err;
+					
+					var ndx = crossfilter(data);
+					var all = ndx.groupAll();
+					console.log(data);
+					
+					//Dimensions
+					var categoryDim = ndx.dimension(function(d) { return d.Category; });
+					var expenseDim = ndx.dimension(function(d) { return d["Expense-for"]; });
+					var amountDim = ndx.dimension(function(d) { return d.Amount; });
+					
+					//Groups
+					var categoryGroup = categoryDim.group();
+					var expenseGroup = expenseDim.group();
+					var amountGroup = amountDim.group();
+					
+					categoryChart
+						.innerRadius(40)
+						.width(350)
+						.dimension(categoryDim)
+						.group(categoryGroup);
+						
+					expenseChart
+						.width(350)
+						.dimension(expenseDim)
+						.group(expenseGroup)
+						.data(function(group){ return group.top(100); })
+						.elasticX(true);
+					
+				
+				dc.renderAll();
+				});
+			</script>
+		</div><!-- end of container -->
+	</body>
+</html>
