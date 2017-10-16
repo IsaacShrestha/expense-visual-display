@@ -9,6 +9,7 @@ For V1, data needs to manually loaded into the CSV file as in table below:
 | 10/1/2017        | 1                   |  Rent        |   1600  |    Rent   | 
 | 10/2/2017        | 2                   |  Subway      |   7     |    Food and grocery   | 
 
+[Check how does it work by clicking here](http://ishrestha.com/expense-visual-display-v1/)
 
 ### Technology used: d3js, dcjs, crossfilter and datatable
 
