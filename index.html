@@ -20,8 +20,17 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-					<div class="domain" id="category">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="dc-data-count strong">
+				
+						<span class="filter-count"></span> selected out of <span class="total-count"></span> events | <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+				
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+					<div class="category" id="category">
 						<div class="graph-header">
 							<p><strong class="strong">Categories</strong> <br/>
 								<span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
@@ -32,8 +41,8 @@
 					</div>
 				</div>
 				
-				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-					<div class="events" id="expense" style="100%;">
+				<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+					<div class="expense" id="expense" style="100%;">
 						<div class="graph-header">
 							<p>
 								<strong class="strong">Spend for</strong> <br/>
@@ -44,6 +53,38 @@
 						<div class="clearfix"></div>
 					</div>
 				</div>
+				
+				<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+					<div class="expense" id="amount" style="100%;">
+						<div class="graph-header">
+							<p>
+								<strong class="strong">Total amount spend</strong> <br/>
+								<span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+								<a class="reset" href="javascript:amountChart.filterAll();dc.redrawAll();" style="display: none;">Reset</a>
+							</p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 table-data">
+					<table id="data-table" class="table table-hover sortable" border='0' cellspacing='0' cellpadding='5' style="100%;">
+					<thead>
+						<tr>
+							<th>Timestamp</th>
+							<th>Expense ID</th>
+							<th>Spend for</th>
+							<th>Amount</th>
+							<th>Categories</th>
+						</tr>
+					</thead>					
+				</table>
+				</div>
+				
 			</div>
 		
 		
@@ -53,7 +94,9 @@
 			<script src="js/dc.js"></script>
 			<script>
 			var categoryChart = dc.pieChart("#category"),
-				expenseChart = dc.rowChart("#expense");
+				expenseChart = dc.rowChart("#expense"),
+				amountChart = dc.rowChart("#amount"),
+				visCount = dc.dataCount(".dc-data-count");
 			
 			
 				d3.csv("data-source/expenses.csv", function(err, data){
@@ -67,11 +110,15 @@
 					var categoryDim = ndx.dimension(function(d) { return d.Category; });
 					var expenseDim = ndx.dimension(function(d) { return d["Expense-for"]; });
 					var amountDim = ndx.dimension(function(d) { return d.Amount; });
+					var timeDim = ndx.dimension(function (d) { return d.Timestamp; });
+					var runDim = ndx.dimension(function(d){ return [+d.Timestamp, +d.domainVal]});
 					
 					//Groups
 					var categoryGroup = categoryDim.group();
 					var expenseGroup = expenseDim.group();
 					var amountGroup = amountDim.group();
+					var timeGroup = timeDim.group();
+					var runGroup = runDim.group();
 					
 					categoryChart
 						.innerRadius(40)
@@ -86,6 +133,64 @@
 						.data(function(group){ return group.top(100); })
 						.elasticX(true);
 					
+					amountChart
+						.width(350)
+						.dimension(amountDim)
+						.group(amountGroup)
+						.data(function(group){ return group.top(100); })
+						.elasticX(true);
+				
+					
+				
+					visCount
+						.dimension(ndx)
+						.group(all);
+				
+					var visTable = $("#data-table").dataTable({
+						"fixedHeader": true,
+						"bPaginate": true,
+						"bLengthChange": true,
+						"bFilter": true,
+						"bSort": true,
+						"bInfo": true,
+						"bAutoWidth": true,
+						"bDeferRender": true,
+						"aaData": timeDim.top(Infinity),
+						"bDestroy": true,
+						"aoColumns": [
+							{"mData": "Timestamp", "sDefaultContent": ""},
+							{"mData": "Expenseid", "sDefaultContent": ""},
+							{"mData": "Expense-for", "sDefaultContent": ""},
+							{"mData": "Amount", "sDefaultContent": ""},
+							{"mData": "Category", "sDefaultContent": ""}
+							
+						]
+					});
+				
+					//to adjust table according to selection in other graphical displays
+					function RefreshTable(){
+						dc.events.trigger(function(){
+							alldata = timeDim.top(Infinity);
+							datatable.fnClearTable();
+							datatable.fnAddData(alldata);
+							datatable.fnDraw();
+						});
+					}
+					
+				//to adjust table according to selection in other graphical displays
+					function RefreshTable(){
+						dc.events.trigger(function(){
+							alldata = timeDim.top(Infinity);
+							visTable.fnClearTable();
+							visTable.fnAddData(alldata);
+							visTable.fnDraw();
+						});
+					}
+					
+					for(var i=0; i< dc.chartRegistry.list().length; i++){
+						var chartI = dc.chartRegistry.list()[i];
+						chartI.on("filtered", RefreshTable);
+					}
 				
 				dc.renderAll();
 				});

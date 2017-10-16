@@ -1,8 +1,8 @@
 Timestamp,Expenseid,Expense-for,Amount,Category
-5/1/2015 0:43,1,unknown,10,Food and groceries
-5/2/2015 0:43,2,unknown,20,Entertainment
-5/3/2015 0:43,3,unknown,2,Personal expense
-5/4/2015 0:43,4,unknown,10,Travel
+5/1/2015 0:43,1,Grocery,10,Food and groceries
+5/2/2015 0:43,2,Movie,20,Entertainment
+6/3/2015 0:43,3,Shirt,12,Personal expense
+7/4/2015 0:43,4,Gas,10,Travel
 ,5,unknown,11,Rent
 ,6,unknown,5,Savings
 ,7,unknown,6,Education
